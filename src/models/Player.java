@@ -1,16 +1,13 @@
 package models;
 
 import java.util.*;
-import java.io.*;
-import java.net.*;
+
+import networking.Server;
 
 public class Player {
     public int playerID;
     public boolean online;
     public boolean isBot;
-    public Socket connection;
-    public ObjectInputStream inFromClient;
-    public ObjectOutputStream outToClient;
     public ArrayList<String> region = new ArrayList<String>();
     Scanner in = new Scanner(System.in);
     public ArrayList<Card> nextHand = new ArrayList<Card>();
@@ -22,43 +19,30 @@ public class Player {
     public int regionRoundScore = 0;
     public int finalScore = 0;
 
-    public Player(int playerID, boolean isBot, Socket connection, ObjectInputStream inFromClient,
-            ObjectOutputStream outToClient) {
+    public Player(int playerID, boolean isBot) {
         this.playerID = playerID;
-        this.connection = connection;
-        this.inFromClient = inFromClient;
-        this.outToClient = outToClient;
         this.isBot = isBot;
-        if (connection == null)
-            this.online = false;
-        else
-            this.online = true;
     }
 
     public void sendMessage(Object message) {
         if (online) {
-            try {
-                outToClient.writeObject(message);
-            } catch (Exception e) {
-            }
+            System.out.println(message);
         } else if (!isBot) {
             System.out.println(message);
         }
     }
 
     public String readMessage() {
-        String word = "";
-        if (online)
+        if (online) {
+            return "balls";
+        } else {
             try {
-                word = (String) inFromClient.readObject();
+                return in.nextLine();
             } catch (Exception e) {
+                // handle exception
+                return null;
             }
-        else
-            try {
-                word = in.nextLine();
-            } catch (Exception e) {
-            }
-        return word;
+        }
     }
 
     public void addCardToDraft(Player sendToPlayer) {

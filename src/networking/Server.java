@@ -2,34 +2,94 @@ package networking;
 
 import java.net.*;
 import java.util.ArrayList;
-import models.Player;
 import java.io.*;
 
 public class Server {
     private int port;
-    private ArrayList<Player> players;
     public ServerSocket aSocket;
+    public ArrayList<ClientHandler> clients = new ArrayList<ClientHandler>();
 
-    public Server(int port, ArrayList<Player> players) {
-        this.port = port;
-        this.players = players;
+    public class ClientHandler {
+        private int id;
+        private Socket socket;
+        private ObjectOutputStream outToClient;
+        private ObjectInputStream inFromClient;
+        static int nextId = 0;
+
+        public ClientHandler(Socket socket) {
+            try {
+                this.socket = socket;
+                this.outToClient = new ObjectOutputStream(socket.getOutputStream());
+                this.inFromClient = new ObjectInputStream(socket.getInputStream());
+                this.id = nextId;
+                nextId++;
+            } catch (Exception e) {
+                // handle exception
+            }
+        }
+
+        public void sendMessage(Object message) {
+            try {
+                outToClient.writeObject(message);
+            } catch (Exception e) {
+                // handle exception
+            }
+        }
+
+        public String readMessage() {
+            try {
+                return (String) inFromClient.readObject();
+            } catch (Exception e) {
+                // handle exception
+                return null;
+            }
+        }
     }
 
-    public void startServer(int numberPlayers, int numberOfBots) throws Exception {
-        players.add(new Player(0, false, null, null, null)); // add this instance as a player
-        // Open for connections if there are online players
-        for (int i = 0; i < numberOfBots; i++) {
-            players.add(new Player(i + 1, true, null, null, null)); // add a bot
+    public Server(int port) {
+        try {
+            this.port = port;
+            this.aSocket = new ServerSocket(port);
+        } catch (Exception e) {
+            // handle exception
         }
-        if (numberPlayers > 1)
-            aSocket = new ServerSocket(port);
-        for (int i = numberOfBots + 1; i < numberPlayers + numberOfBots; i++) {
-            Socket connectionSocket = aSocket.accept();
-            ObjectInputStream inFromClient = new ObjectInputStream(connectionSocket.getInputStream());
-            ObjectOutputStream outToClient = new ObjectOutputStream(connectionSocket.getOutputStream());
-            players.add(new Player(i, false, connectionSocket, inFromClient, outToClient)); // add an online client
-            System.out.println("Connected to player " + i);
-            outToClient.writeObject("You connected to the server as player " + i + "\n");
+    }
+
+    public boolean acceptClient() {
+        try {
+            Socket connection = aSocket.accept();
+            ClientHandler handler = new ClientHandler(connection);
+            clients.add(handler);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
+    }
+
+    public void listenToClients(int amountOfPlayers) {
+        while (clients.size() < amountOfPlayers) {
+            if (acceptClient()) {
+                System.out.println("Client connected");
+            }
+        }
+    }
+
+    public void broadcastMessage(String message) {
+        for (ClientHandler client : clients) {
+            client.sendMessage(message);
+        }
+    }
+
+    public String readMessageFromClient(int id) {
+        return clients.get(id).readMessage();
+    }
+
+    public ArrayList<String> waitForClientMessages() {
+        ThreadPool<String> pool = new ThreadPool<String>(clients.size());
+        for (int i = 0; i < clients.size(); i++) {
+            int id = i;
+            pool.submit_task(() -> readMessageFromClient(id));
+        }
+        return pool.run_tasks();
     }
 }
