@@ -2,8 +2,6 @@ package models;
 
 import java.util.*;
 
-import networking.Server;
-
 public class Player {
     public int playerID;
     public boolean online;
