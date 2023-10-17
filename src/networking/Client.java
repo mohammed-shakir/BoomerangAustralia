@@ -18,7 +18,7 @@ public class Client {
             this.outToServer = new ObjectOutputStream(socket.getOutputStream());
             this.inFromServer = new ObjectInputStream(socket.getInputStream());
         } catch (Exception e) {
-            // handle exception
+            e.printStackTrace();
         }
     }
 
@@ -47,7 +47,7 @@ public class Client {
         try {
             outToServer.writeObject(message);
         } catch (Exception e) {
-            // handle exception
+            e.printStackTrace();
         }
     }
 }

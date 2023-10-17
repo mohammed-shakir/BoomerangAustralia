@@ -24,7 +24,7 @@ public class Server {
                 this.id = nextId;
                 nextId++;
             } catch (Exception e) {
-                // handle exception
+                e.printStackTrace();
             }
         }
 
@@ -32,7 +32,7 @@ public class Server {
             try {
                 outToClient.writeObject(message);
             } catch (Exception e) {
-                // handle exception
+                e.printStackTrace();
             }
         }
 
@@ -40,7 +40,6 @@ public class Server {
             try {
                 return (String) inFromClient.readObject();
             } catch (Exception e) {
-                // handle exception
                 return null;
             }
         }
@@ -51,7 +50,7 @@ public class Server {
             this.port = port;
             this.aSocket = new ServerSocket(port);
         } catch (Exception e) {
-            // handle exception
+            e.printStackTrace();
         }
     }
 
