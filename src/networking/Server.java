@@ -8,6 +8,7 @@ public class Server {
     private int port;
     public ServerSocket aSocket;
     public ArrayList<ClientHandler> clients = new ArrayList<ClientHandler>();
+    private static Server server_instance = null;
 
     public class ClientHandler {
         private int id;
@@ -45,13 +46,23 @@ public class Server {
         }
     }
 
-    public Server(int port) {
+    public Server() {
+    }
+
+    public void serverStart(int port) {
         try {
             this.port = port;
             this.aSocket = new ServerSocket(port);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static synchronized Server getInstance() {
+        if (server_instance == null)
+            server_instance = new Server();
+
+        return server_instance;
     }
 
     public boolean acceptClient() {

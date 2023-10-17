@@ -36,7 +36,7 @@ public class Client {
                 if (message.equals("Start rounds")) {
                     handleRounds();
                 } else {
-                    System.out.println(message); // Display other messages
+                    System.out.println(message);
                 }
             }
         } catch (Exception e) {

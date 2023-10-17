@@ -10,14 +10,13 @@ public class Boomerang {
 
     public Boomerang(String[] args) throws Exception {
         if (args.length == 1) {
-            Server server = new Server(Integer.parseInt(args[0]));
-            server.listenToClients(2);
-            GameLoop serverGameLoop = new GameLoop(server);
+            Server.getInstance().serverStart(Integer.parseInt(args[0]));
+            Server.getInstance().listenToClients(2);
+            GameLoop serverGameLoop = new GameLoop();
             serverGameLoop.run();
         } else if (args.length == 2) {
             Client client = new Client(args[0], Integer.parseInt(args[1]));
             client.awaitMessageFromServer();
-            // client.sendMessage("Joining game");
             Deck deck = new Deck();
             deck.loadCardsFromJSON("/australia/cards.json", new AustralianCardFactory());
             for (int i = 0; i < deck.getCardsList().size(); i++) {
