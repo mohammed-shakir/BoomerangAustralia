@@ -71,6 +71,7 @@ public class Server {
                 System.out.println("Client connected");
             }
         }
+        broadcastMessage("Start rounds");
     }
 
     public void broadcastMessage(String message) {

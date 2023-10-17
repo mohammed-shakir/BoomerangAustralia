@@ -4,6 +4,7 @@ import models.cards.AustralianCard;
 import models.cards.AustralianCardFactory;
 import models.cards.Deck;
 import networking.*;
+import game.*;
 
 public class Boomerang {
 
@@ -11,16 +12,12 @@ public class Boomerang {
         if (args.length == 1) {
             Server server = new Server(Integer.parseInt(args[0]));
             server.listenToClients(2);
-            server.broadcastMessage("Hello");
-            ArrayList<String> messages = server.waitForClientMessages();
-            for (String message : messages) {
-                System.out.println(message);
-            }
+            GameLoop serverGameLoop = new GameLoop(server);
+            serverGameLoop.run();
         } else if (args.length == 2) {
             Client client = new Client(args[0], Integer.parseInt(args[1]));
-            String message = client.awaitMessageFromServer();
-            System.out.println(message);
-            client.sendMessage("Joining game");
+            client.awaitMessageFromServer();
+            // client.sendMessage("Joining game");
             Deck deck = new Deck();
             deck.loadCardsFromJSON("/australia/cards.json", new AustralianCardFactory());
             for (int i = 0; i < deck.getCardsList().size(); i++) {

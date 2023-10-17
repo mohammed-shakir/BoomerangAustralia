@@ -2,6 +2,7 @@ package networking;
 
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 
 public class Client {
     private String ipAddress;
@@ -22,16 +23,36 @@ public class Client {
         }
     }
 
-    public String awaitMessageFromServer() {
+    public String promptUserForMessage() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter your message for this round: ");
+        return scanner.nextLine();
+    }
+
+    public void awaitMessageFromServer() {
         try {
             while (true) {
                 String message = readMessageFromServer();
-                if (message.length() > 0) {
-                    return message;
+                if (message.equals("Start rounds")) {
+                    handleRounds();
+                } else {
+                    System.out.println(message); // Display other messages
                 }
             }
         } catch (Exception e) {
-            return "No message from server";
+            System.out.println("No message from server");
+        }
+    }
+
+    private void handleRounds() {
+        while (true) {
+            String inputMessage = promptUserForMessage();
+            sendMessage(inputMessage);
+            String response = readMessageFromServer();
+            if (response != null && !response.startsWith("Received messages for round")) {
+                System.out.println(response);
+                break;
+            }
         }
     }
 
