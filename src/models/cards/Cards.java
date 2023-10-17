@@ -10,4 +10,6 @@ public abstract class Cards {
         this.number = number;
         this.region = region;
     }
+
+    public abstract String displayCard();
 }

@@ -2,6 +2,10 @@ package networking;
 
 import java.net.*;
 import java.util.ArrayList;
+
+import models.player.HumanPlayer;
+import models.player.Player;
+
 import java.io.*;
 
 public class Server {
@@ -9,13 +13,14 @@ public class Server {
     public ServerSocket aSocket;
     public ArrayList<ClientHandler> clients = new ArrayList<ClientHandler>();
     private static Server server_instance = null;
+    public ArrayList<Player> players = new ArrayList<Player>();
 
     public class ClientHandler {
         private int id;
-        private Socket socket;
+        public Socket socket;
         private ObjectOutputStream outToClient;
         private ObjectInputStream inFromClient;
-        static int nextId = 0;
+        static int nextId = 1;
 
         public ClientHandler(Socket socket) {
             try {
@@ -44,6 +49,16 @@ public class Server {
                 return null;
             }
         }
+
+        public void close() {
+            try {
+                outToClient.close();
+                inFromClient.close();
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public Server() {
@@ -70,6 +85,10 @@ public class Server {
             Socket connection = aSocket.accept();
             ClientHandler handler = new ClientHandler(connection);
             clients.add(handler);
+
+            HumanPlayer newPlayer = new HumanPlayer(handler.id);
+            players.add(newPlayer);
+
             return true;
         } catch (Exception e) {
             return false;
@@ -79,10 +98,10 @@ public class Server {
     public void listenToClients(int amountOfPlayers) {
         while (clients.size() < amountOfPlayers) {
             if (acceptClient()) {
-                System.out.println("Client connected");
+                System.out.println("Player " + players.get(players.size() - 1).id + " connected");
             }
         }
-        broadcastMessage("Start rounds");
+        broadcastMessage("Start Game");
     }
 
     public void broadcastMessage(String message) {
@@ -102,5 +121,33 @@ public class Server {
             pool.submit_task(() -> readMessageFromClient(id));
         }
         return pool.run_tasks();
+    }
+
+    public Player getPlayerById(int id) {
+        return players.get(id);
+    }
+
+    public void sendMessageToPlayer(int id, String message) {
+        for (ClientHandler client : clients) {
+            if (client.id == id) {
+                client.sendMessage(message);
+                break;
+            }
+        }
+    }
+
+    public void stopServer() {
+        try {
+            for (ClientHandler client : clients) {
+                client.close();
+            }
+            if (!this.aSocket.isClosed()) {
+                this.aSocket.close();
+            }
+            System.out.println("Game Over");
+            System.exit(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

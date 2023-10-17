@@ -1,8 +1,5 @@
 import java.util.*;
 
-import models.cards.AustralianCard;
-import models.cards.AustralianCardFactory;
-import models.cards.Deck;
 import networking.*;
 import game.*;
 
@@ -14,14 +11,10 @@ public class Boomerang {
             Server.getInstance().listenToClients(2);
             GameLoop serverGameLoop = new GameLoop();
             serverGameLoop.run();
+            Server.getInstance().stopServer();
         } else if (args.length == 2) {
             Client client = new Client(args[0], Integer.parseInt(args[1]));
             client.awaitMessageFromServer();
-            Deck deck = new Deck();
-            deck.loadCardsFromJSON("/australia/cards.json", new AustralianCardFactory());
-            for (int i = 0; i < deck.getCardsList().size(); i++) {
-                ((AustralianCard) deck.getCardsList().get(i)).displayCard();
-            }
         } else {
             System.out.println("Usage: java Boomerang <port> or java Boomerang <ip> <port>");
         }

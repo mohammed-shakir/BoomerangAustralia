@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 public class Deck {
     private List<Cards> cardsList;
@@ -38,6 +39,16 @@ public class Deck {
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Cards> draftCards() {
+        List<Cards> draftedCards = new ArrayList<>();
+        Collections.shuffle(cardsList);
+        int draftCount = Math.min(7, cardsList.size());
+        for (int i = 0; i < draftCount; i++) {
+            draftedCards.add(cardsList.remove(0));
+        }
+        return draftedCards;
     }
 }
 

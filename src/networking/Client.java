@@ -33,10 +33,15 @@ public class Client {
         try {
             while (true) {
                 String message = readMessageFromServer();
-                if (message.equals("Start rounds")) {
-                    handleRounds();
-                } else {
-                    System.out.println(message);
+                System.out.println(message);
+                if (message.startsWith("Round ")) {
+                    String inputMessage = promptUserForMessage();
+                    sendMessage(inputMessage);
+                }
+                if (message.equals("Game Over")) {
+                    socket.close();
+                    System.exit(0);
+                    break;
                 }
             }
         } catch (Exception e) {

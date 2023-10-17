@@ -24,17 +24,19 @@ public class AustralianCard extends Cards {
                 '}';
     }
 
-    public void displayCard() {
+    public String displayCard() {
+        StringBuilder sb = new StringBuilder();
         String separator = "+-----------------------------------------+";
-        System.out.println(separator);
-        System.out.println("| Name       : " + String.format("%-29s", name) + "|");
-        System.out.println("| Letter     : " + String.format("%-29s", letter) + "|");
-        System.out.println("| Region     : " + String.format("%-29s", region) + "|");
-        System.out.println("| Number     : " + String.format("%-29d", number) + "|");
-        System.out.println("| Collection : " + String.format("%-29s", Collections) + "|");
-        System.out.println("| Animal     : " + String.format("%-29s", Animals) + "|");
-        System.out.println("| Activity   : " + String.format("%-29s", Activities) + "|");
-        System.out.println(separator);
-        System.out.println();
+        sb.append(separator).append("\n");
+        sb.append("| Name       : ").append(String.format("%-29s", name)).append("|\n");
+        sb.append("| Letter     : ").append(String.format("%-29s", letter)).append("|\n");
+        sb.append("| Region     : ").append(String.format("%-29s", region)).append("|\n");
+        sb.append("| Number     : ").append(String.format("%-29d", number)).append("|\n");
+        sb.append("| Collection : ").append(String.format("%-29s", Collections)).append("|\n");
+        sb.append("| Animal     : ").append(String.format("%-29s", Animals)).append("|\n");
+        sb.append("| Activity   : ").append(String.format("%-29s", Activities)).append("|\n");
+        sb.append(separator).append("\n");
+
+        return sb.toString();
     }
 }
