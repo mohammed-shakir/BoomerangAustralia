@@ -18,6 +18,7 @@ public class GameLoop {
     private static final int LOOP_COUNT = 5;
     private static final int DRAFT_COUNT = 7;
     private final Drafting draftMechanism = new Draft();
+    boolean throwCard = true;
 
     public void run() {
         List<Player> players = Server.getInstance().players;
@@ -37,8 +38,16 @@ public class GameLoop {
 
         for (int draft = 0; draft < DRAFT_COUNT; draft++) {
             Server.getInstance().broadcastMessage("\nDraft " + (draft + 1) + "\n");
+
             broadcastPlayerHands(players);
             broadcastChosenCards(players);
+
+            if (draft == 0) {
+                Server.getInstance().broadcastMessage("Chose a Throw Card.");
+            } else {
+                Server.getInstance().broadcastMessage("Chose a Card to keep.");
+                throwCard = false;
+            }
 
             Server.getInstance().broadcastMessage("PROMPT");
             ArrayList<String> clientMessages = Server.getInstance().waitForClientMessages();
@@ -56,6 +65,9 @@ public class GameLoop {
 
             for (Cards card : player.hand) {
                 if (card instanceof AustralianCard && ((AustralianCard) card).getLetter().equals(chosenLetter)) {
+                    if (throwCard) {
+                        card.setHidden(true);
+                    }
                     player.chosenCards.add(card);
                     player.hand.remove(card);
                     break;

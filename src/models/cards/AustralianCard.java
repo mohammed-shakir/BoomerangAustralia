@@ -26,13 +26,20 @@ public class AustralianCard extends Cards {
 
     public String printCardDetails() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Name: ").append(name).append(", ").append("Letter: ").append(letter).append(", ").append("Region: ")
-                .append(region).append(", ").append("Number: ").append(number).append(", ").append("Collections: ")
-                .append(Collections).append(", ").append("Animals: ").append(Animals).append(", ")
-                .append("Activities: ")
-                .append(Activities);
+        if (this.getHidden()) {
+            sb.append("Throw Card");
 
-        return sb.toString();
+            return sb.toString();
+        } else {
+            sb.append("Name: ").append(name).append(", ").append("Letter: ").append(letter).append(", ")
+                    .append("Region: ")
+                    .append(region).append(", ").append("Number: ").append(number).append(", ").append("Collections: ")
+                    .append(Collections).append(", ").append("Animals: ").append(Animals).append(", ")
+                    .append("Activities: ")
+                    .append(Activities);
+
+            return sb.toString();
+        }
     }
 
     public String displayCard() {

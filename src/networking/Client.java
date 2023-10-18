@@ -29,7 +29,7 @@ public class Client {
         String cardLetter = scanner.nextLine();
         while (cardLetter.length() != 1) {
             System.out.print("Invalid input. Please enter a single letter for the card you want to choose: ");
-            cardLetter = scanner.nextLine();
+            cardLetter = scanner.nextLine().trim();
         }
         return cardLetter;
     }
