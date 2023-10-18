@@ -13,8 +13,6 @@ public abstract class Cards {
         this.hidden = hidden;
     }
 
-    public abstract String displayCard();
-
     public abstract String printCardDetails();
 
     public abstract boolean getHidden();
@@ -22,4 +20,6 @@ public abstract class Cards {
     public abstract void setHidden(boolean hidden);
 
     public abstract String getLetter();
+
+    public abstract int getNumber();
 }

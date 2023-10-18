@@ -90,7 +90,7 @@ public class GameLoop {
             Player player = players.get(i);
             String chosenLetter;
 
-            if (player instanceof Bot) { // If it's a bot
+            if (player instanceof Bot) {
                 chosenLetter = ((Bot) player).chooseCard();
             } else {
                 chosenLetter = messages.get(i);

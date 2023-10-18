@@ -43,22 +43,6 @@ public class AustralianCard extends Cards {
         }
     }
 
-    public String displayCard() {
-        StringBuilder sb = new StringBuilder();
-        String separator = "+-----------------------------------------+";
-        sb.append(separator).append("\n");
-        sb.append("| Name       : ").append(String.format("%-29s", name)).append("|\n");
-        sb.append("| Letter     : ").append(String.format("%-29s", letter)).append("|\n");
-        sb.append("| Region     : ").append(String.format("%-29s", region)).append("|\n");
-        sb.append("| Number     : ").append(String.format("%-29d", number)).append("|\n");
-        sb.append("| Collection : ").append(String.format("%-29s", Collections)).append("|\n");
-        sb.append("| Animal     : ").append(String.format("%-29s", Animals)).append("|\n");
-        sb.append("| Activity   : ").append(String.format("%-29s", Activities)).append("|\n");
-        sb.append(separator).append("\n");
-
-        return sb.toString();
-    }
-
     public boolean getHidden() {
         return hidden;
     }
@@ -69,5 +53,29 @@ public class AustralianCard extends Cards {
 
     public String getLetter() {
         return letter;
+    }
+
+    public int getNumber() {
+        return this.number;
+    }
+
+    public String getCollectionItem() {
+        return this.Collections;
+    }
+
+    public String getRegion() {
+        return this.region;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public String getAnimalType() {
+        return this.Animals;
+    }
+
+    public String getActivity() {
+        return this.Activities;
     }
 }
