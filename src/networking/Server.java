@@ -16,7 +16,7 @@ public class Server {
     public ArrayList<Player> players = new ArrayList<Player>();
 
     public class ClientHandler {
-        private int id;
+        public int id;
         public Socket socket;
         private ObjectOutputStream outToClient;
         private ObjectInputStream inFromClient;
@@ -48,6 +48,10 @@ public class Server {
             } catch (Exception e) {
                 return null;
             }
+        }
+
+        public ArrayList<ClientHandler> getClients() {
+            return clients;
         }
 
         public void close() {
@@ -101,7 +105,7 @@ public class Server {
                 System.out.println("Player " + players.get(players.size() - 1).id + " connected");
             }
         }
-        broadcastMessage("Start Game");
+        broadcastMessage("\033[32mStart Game \033[0m \n");
     }
 
     public void broadcastMessage(String message) {

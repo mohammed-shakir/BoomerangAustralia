@@ -4,8 +4,8 @@ public class AustralianCard extends Cards {
     private String Collections, Animals, Activities;
 
     public AustralianCard(String name, String letter, String region, int number, String Collections, String Animals,
-            String Activities) {
-        super(name, letter, number, region);
+            String Activities, boolean hidden) {
+        super(name, letter, number, region, hidden);
         this.Collections = Collections;
         this.Animals = Animals;
         this.Activities = Activities;
@@ -24,6 +24,17 @@ public class AustralianCard extends Cards {
                 '}';
     }
 
+    public String printCardDetails() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Name: ").append(name).append(", ").append("Letter: ").append(letter).append(", ").append("Region: ")
+                .append(region).append(", ").append("Number: ").append(number).append(", ").append("Collections: ")
+                .append(Collections).append(", ").append("Animals: ").append(Animals).append(", ")
+                .append("Activities: ")
+                .append(Activities);
+
+        return sb.toString();
+    }
+
     public String displayCard() {
         StringBuilder sb = new StringBuilder();
         String separator = "+-----------------------------------------+";
@@ -38,5 +49,17 @@ public class AustralianCard extends Cards {
         sb.append(separator).append("\n");
 
         return sb.toString();
+    }
+
+    public boolean getHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
+
+    public String getLetter() {
+        return letter;
     }
 }

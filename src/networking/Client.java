@@ -25,39 +25,33 @@ public class Client {
 
     public String promptUserForMessage() {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter your message for this round: ");
-        return scanner.nextLine();
+        System.out.print("Enter the letter of the card you want to choose: ");
+        String cardLetter = scanner.nextLine();
+        while (cardLetter.length() != 1) {
+            System.out.print("Invalid input. Please enter a single letter for the card you want to choose: ");
+            cardLetter = scanner.nextLine();
+        }
+        return cardLetter;
     }
 
     public void awaitMessageFromServer() {
         try {
             while (true) {
                 String message = readMessageFromServer();
-                System.out.println(message);
-                if (message.startsWith("Round ")) {
+                if (message.startsWith("PROMPT")) {
                     String inputMessage = promptUserForMessage();
                     sendMessage(inputMessage);
-                }
-                if (message.equals("Game Over")) {
+                } else if (message.equals("Game Over")) {
+                    System.out.println(message);
                     socket.close();
                     System.exit(0);
                     break;
+                } else {
+                    System.out.println(message);
                 }
             }
         } catch (Exception e) {
             System.out.println("No message from server");
-        }
-    }
-
-    private void handleRounds() {
-        while (true) {
-            String inputMessage = promptUserForMessage();
-            sendMessage(inputMessage);
-            String response = readMessageFromServer();
-            if (response != null && !response.startsWith("Received messages for round")) {
-                System.out.println(response);
-                break;
-            }
         }
     }
 

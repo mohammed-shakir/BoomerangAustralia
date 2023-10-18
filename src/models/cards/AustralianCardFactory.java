@@ -13,6 +13,6 @@ public class AustralianCardFactory implements CardFactory {
         String animal = (String) cardData.get("animal");
         String activity = (String) cardData.get("activity");
 
-        return new AustralianCard(name, letter, region, number, collection, animal, activity);
+        return new AustralianCard(name, letter, region, number, collection, animal, activity, false);
     }
 }
