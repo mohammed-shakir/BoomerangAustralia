@@ -15,12 +15,14 @@ import models.player.Player;
 
 import networking.*;
 import networking.Server.ClientHandler;
+import scoring.AustraliaScoreCalculator;
 
 public class GameLoop {
     private static final int ROUND_COUNT = 2; // 4 rounds in total
     private static final int DRAFT_COUNT = 3;
     private final Drafting draftMechanism = new Draft();
     boolean throwCard = true;
+    private final AustraliaScoreCalculator scoreCalculator = new AustraliaScoreCalculator();
 
     public void run() {
         List<Player> players = Server.getInstance().players;
@@ -33,6 +35,8 @@ public class GameLoop {
             executeGameRound(i, players);
         }
 
+        endGameDisplay(players);
+
         Server.getInstance().broadcastMessage("Game Over");
     }
 
@@ -44,11 +48,12 @@ public class GameLoop {
             Server.getInstance().broadcastMessage("\nDraft " + (draft + 1) + "\n");
 
             broadcastPlayerHands(players);
-            broadcastChosenCards(players);
 
             if (draft == 0) {
+                broadcastChosenCards(players);
                 Server.getInstance().broadcastMessage("Chose a Throw Card.");
             } else {
+                broadcastChosenCards(players);
                 Server.getInstance().broadcastMessage("Chose a Card to keep.");
                 throwCard = false;
             }
@@ -74,14 +79,18 @@ public class GameLoop {
             StringBuilder playerCardsMessage = new StringBuilder();
             playerCardsMessage.append("Yout Cards: ");
             for (Cards card : player.chosenCards) {
-                playerCardsMessage.append(card.printCardDetails()).append(", ");
+                playerCardsMessage.append(card.printCardDetails(false)).append(", ");
             }
             if (playerCardsMessage.length() > 2) {
                 playerCardsMessage.setLength(playerCardsMessage.length() - 2);
             }
             Server.getInstance().sendMessageToPlayer(player.id, playerCardsMessage.toString());
 
-            Server.getInstance().broadcastMessage("Player " + player.id + " Score: 69");
+            int playerScore = scoreCalculator.calculateTotalScore(new ArrayList<>(player.chosenCards));
+
+            Server.getInstance().broadcastMessage("Player " + player.id + " Score: " + playerScore);
+
+            player.setScore(playerScore);
         }
     }
 
@@ -113,6 +122,14 @@ public class GameLoop {
         }
     }
 
+    private void endGameDisplay(List<Player> players) {
+        Server.getInstance().broadcastMessage("\nEnd of Game Details");
+
+        for (Player player : players) {
+            Server.getInstance().broadcastMessage("Player " + player.id + " Score: " + player.getScore());
+        }
+    }
+
     private Deck initializeDeck() {
         Deck deck = new Deck();
         deck.loadCardsFromJSON("/australia/cards.json", new AustralianCardFactory());
@@ -129,7 +146,7 @@ public class GameLoop {
         for (Player player : players) {
             Server.getInstance().sendMessageToPlayer(player.id, "Your Hand: ");
             for (var card : player.hand) {
-                Server.getInstance().sendMessageToPlayer(player.id, "Card: " + card.printCardDetails());
+                Server.getInstance().sendMessageToPlayer(player.id, "Card: " + card.printCardDetails(false));
             }
         }
     }
@@ -139,7 +156,7 @@ public class GameLoop {
         for (Player player : players) {
             StringBuilder chosenCardsMessage = new StringBuilder();
             for (var chosenCard : player.chosenCards) {
-                chosenCardsMessage.append(chosenCard.printCardDetails()).append(", ");
+                chosenCardsMessage.append(chosenCard.printCardDetails(false)).append(", ");
             }
             if (chosenCardsMessage.length() > 0) {
                 chosenCardsMessage.setLength(chosenCardsMessage.length() - 2);

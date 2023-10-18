@@ -24,23 +24,23 @@ public class AustralianCard extends Cards {
                 '}';
     }
 
-    public String printCardDetails() {
+    public String printCardDetails(boolean dontShowCard) {
         StringBuilder sb = new StringBuilder();
-        if (this.getHidden()) {
-            sb.append("Throw Card");
 
-            return sb.toString();
-        } else {
-            sb.append("\033[32mName: \033[0m").append(name).append(", ").append("Letter: ").append(letter)
-                    .append(", ")
-                    .append("Region: ")
-                    .append(region).append(", ").append("Number: ").append(number).append(", ").append("Collections: ")
-                    .append(Collections).append(", ").append("Animals: ").append(Animals).append(", ")
-                    .append("Activities: ")
-                    .append(Activities);
-
-            return sb.toString();
+        if (dontShowCard) {
+            return "card(\"Throw Card\")";
         }
+
+        sb.append("\033[32mName: \033[0m").append(name).append(", ").append("Letter: ").append(letter)
+                .append(", ")
+                .append("Region: ")
+                .append(region).append(", ").append("Number: ").append(number).append(", ").append("Collections: ")
+                .append(Collections).append(", ").append("Animals: ").append(Animals).append(", ")
+                .append("Activities: ")
+                .append(Activities);
+
+        return sb.toString();
+
     }
 
     public boolean getHidden() {

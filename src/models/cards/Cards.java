@@ -13,7 +13,7 @@ public abstract class Cards {
         this.hidden = hidden;
     }
 
-    public abstract String printCardDetails();
+    public abstract String printCardDetails(boolean dontShowCard);
 
     public abstract boolean getHidden();
 
