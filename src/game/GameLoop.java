@@ -76,10 +76,14 @@ public class GameLoop {
         Server.getInstance().broadcastMessage("\nEnd of Round Details");
 
         for (Player player : players) {
+            for (Cards card : player.chosenCards) {
+                card.setHidden(false);
+            }
+
             StringBuilder playerCardsMessage = new StringBuilder();
             playerCardsMessage.append("Yout Cards: ");
             for (Cards card : player.chosenCards) {
-                playerCardsMessage.append(card.printCardDetails(false)).append(", ");
+                playerCardsMessage.append(card.printCardDetails()).append(", ");
             }
             if (playerCardsMessage.length() > 2) {
                 playerCardsMessage.setLength(playerCardsMessage.length() - 2);
@@ -88,7 +92,13 @@ public class GameLoop {
 
             int playerScore = scoreCalculator.calculateTotalScore(new ArrayList<>(player.chosenCards));
 
-            Server.getInstance().broadcastMessage("Player " + player.id + " Score: " + playerScore);
+            for (ClientHandler client : Server.getInstance().clients) {
+                if (client.id == player.id) {
+                    client.sendMessage("Your Score: " + playerScore);
+                } else {
+                    client.sendMessage("Player " + player.id + " Score: " + playerScore);
+                }
+            }
 
             player.setScore(playerScore);
         }
@@ -126,7 +136,13 @@ public class GameLoop {
         Server.getInstance().broadcastMessage("\nEnd of Game Details");
 
         for (Player player : players) {
-            Server.getInstance().broadcastMessage("Player " + player.id + " Score: " + player.getScore());
+            for (ClientHandler client : Server.getInstance().clients) {
+                if (client.id == player.id) {
+                    client.sendMessage("Your Final Score: " + player.getScore());
+                } else {
+                    client.sendMessage("Player " + player.id + " Final Score: " + player.getScore());
+                }
+            }
         }
     }
 
@@ -146,7 +162,7 @@ public class GameLoop {
         for (Player player : players) {
             Server.getInstance().sendMessageToPlayer(player.id, "Your Hand: ");
             for (var card : player.hand) {
-                Server.getInstance().sendMessageToPlayer(player.id, "Card: " + card.printCardDetails(false));
+                Server.getInstance().sendMessageToPlayer(player.id, "Card: " + card.printCardDetails());
             }
         }
     }
@@ -156,7 +172,7 @@ public class GameLoop {
         for (Player player : players) {
             StringBuilder chosenCardsMessage = new StringBuilder();
             for (var chosenCard : player.chosenCards) {
-                chosenCardsMessage.append(chosenCard.printCardDetails(false)).append(", ");
+                chosenCardsMessage.append(chosenCard.printCardDetails()).append(", ");
             }
             if (chosenCardsMessage.length() > 0) {
                 chosenCardsMessage.setLength(chosenCardsMessage.length() - 2);

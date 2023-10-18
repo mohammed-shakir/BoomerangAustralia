@@ -24,12 +24,12 @@ public class AustralianCard extends Cards {
                 '}';
     }
 
-    public String printCardDetails(boolean dontShowCard) {
-        StringBuilder sb = new StringBuilder();
-
-        if (dontShowCard) {
-            return "card(\"Throw Card\")";
+    public String printCardDetails() {
+        if (this.hidden) {
+            return "Throw card";
         }
+
+        StringBuilder sb = new StringBuilder();
 
         sb.append("\033[32mName: \033[0m").append(name).append(", ").append("Letter: ").append(letter)
                 .append(", ")
