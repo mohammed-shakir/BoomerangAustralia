@@ -1,6 +1,7 @@
 package game;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import models.cards.AustralianCard;
@@ -9,24 +10,26 @@ import models.cards.Cards;
 import models.cards.Deck;
 import models.draft.Draft;
 import models.draft.Drafting;
+import models.player.Bot;
 import models.player.Player;
 
 import networking.*;
 import networking.Server.ClientHandler;
 
 public class GameLoop {
-    private static final int LOOP_COUNT = 5;
-    private static final int DRAFT_COUNT = 7;
+    private static final int ROUND_COUNT = 2; // 4 rounds in total
+    private static final int DRAFT_COUNT = 3;
     private final Drafting draftMechanism = new Draft();
     boolean throwCard = true;
 
     public void run() {
         List<Player> players = Server.getInstance().players;
-        Deck deck = initializeDeck();
 
-        draftInitialHandsForPlayers(players, deck);
-
-        for (int i = 0; i < LOOP_COUNT; i++) {
+        for (int i = 0; i < ROUND_COUNT; i++) {
+            throwCard = true;
+            emptyPlayerHands(players);
+            Deck deck = initializeDeck();
+            draftInitialHandsForPlayers(players, deck);
             executeGameRound(i, players);
         }
 
@@ -34,9 +37,10 @@ public class GameLoop {
     }
 
     private void executeGameRound(int round, List<Player> players) {
-        Server.getInstance().broadcastMessage("Round " + (round + 1));
+        Server.getInstance().broadcastMessage("\nRound " + (round + 1));
+        int draft = 0;
 
-        for (int draft = 0; draft < DRAFT_COUNT; draft++) {
+        for (draft = 0; draft < DRAFT_COUNT; draft++) {
             Server.getInstance().broadcastMessage("\nDraft " + (draft + 1) + "\n");
 
             broadcastPlayerHands(players);
@@ -56,22 +60,53 @@ public class GameLoop {
 
             draftMechanism.draft(players);
         }
+
+        // Give catch card
+        draftMechanism.draft(players);
+
+        endOfRoundDisplay(players);
+    }
+
+    private void endOfRoundDisplay(List<Player> players) {
+        Server.getInstance().broadcastMessage("\nEnd of Round Details");
+
+        for (Player player : players) {
+            StringBuilder playerCardsMessage = new StringBuilder();
+            playerCardsMessage.append("Yout Cards: ");
+            for (Cards card : player.chosenCards) {
+                playerCardsMessage.append(card.printCardDetails()).append(", ");
+            }
+            if (playerCardsMessage.length() > 2) {
+                playerCardsMessage.setLength(playerCardsMessage.length() - 2);
+            }
+            Server.getInstance().sendMessageToPlayer(player.id, playerCardsMessage.toString());
+
+            Server.getInstance().broadcastMessage("Player " + player.id + " Score: 69");
+        }
     }
 
     private void processPlayerCardSelections(ArrayList<String> messages, List<Player> players) {
-        for (int i = 0; i < messages.size() && i < players.size(); i++) {
-            String chosenLetter = messages.get(i);
+        for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
+            String chosenLetter;
 
-            for (Cards card : player.hand) {
+            if (player instanceof Bot) { // If it's a bot
+                chosenLetter = ((Bot) player).chooseCard();
+            } else {
+                chosenLetter = messages.get(i);
+            }
+
+            Iterator<Cards> it = player.hand.iterator();
+            while (it.hasNext()) {
+                Cards card = it.next();
                 if (card instanceof AustralianCard && ((AustralianCard) card).getLetter().equals(chosenLetter)) {
                     if (throwCard) {
                         card.setHidden(true);
                     }
                     player.chosenCards.add(card);
-                    player.hand.remove(card);
+                    it.remove();
                     break;
-                } else {
+                } else if (!(player instanceof Bot)) {
                     Server.getInstance().sendMessageToPlayer(player.id, "Invalid card chosen");
                 }
             }
@@ -118,6 +153,13 @@ public class GameLoop {
             }
         }
         Server.getInstance().broadcastMessage("\n");
+    }
+
+    private void emptyPlayerHands(List<Player> players) {
+        for (Player player : players) {
+            player.hand.clear();
+            player.chosenCards.clear();
+        }
     }
 
     private void displayClientMessages(ArrayList<String> messages) {

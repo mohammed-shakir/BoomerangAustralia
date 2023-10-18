@@ -3,6 +3,7 @@ package networking;
 import java.net.*;
 import java.util.ArrayList;
 
+import models.player.Bot;
 import models.player.HumanPlayer;
 import models.player.Player;
 
@@ -137,6 +138,14 @@ public class Server {
                 client.sendMessage(message);
                 break;
             }
+        }
+    }
+
+    public void initiateBots(int amountOfBots) {
+        int amountOfPlayers = players.size();
+        for (int i = 1; i <= amountOfBots; i++) {
+            Bot bot = new Bot(amountOfPlayers + i);
+            players.add(bot);
         }
     }
 

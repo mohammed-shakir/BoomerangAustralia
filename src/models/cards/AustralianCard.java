@@ -31,7 +31,8 @@ public class AustralianCard extends Cards {
 
             return sb.toString();
         } else {
-            sb.append("Name: ").append(name).append(", ").append("Letter: ").append(letter).append(", ")
+            sb.append("\033[32mName: \033[0m").append(name).append(", ").append("Letter: ").append(letter)
+                    .append(", ")
                     .append("Region: ")
                     .append(region).append(", ").append("Number: ").append(number).append(", ").append("Collections: ")
                     .append(Collections).append(", ").append("Animals: ").append(Animals).append(", ")

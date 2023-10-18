@@ -3,7 +3,7 @@ setlocal enabledelayedexpansion
 
 :: Run the game
 echo Running Boomerang...
-java -cp bin;lib\json-simple-1.1.jar Boomerang 8080
+java -cp bin;lib\json-simple-1.1.jar Boomerang 8080 2 0
 
 
 :: End the script
