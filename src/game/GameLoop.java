@@ -13,8 +13,8 @@ import networking.*;
 import scoring.AustraliaScoreCalculator;
 
 public class GameLoop {
-    private static final int ROUND_COUNT = 2; // 4 rounds in total
-    private static final int DRAFT_COUNT = 3; // 6 drafts in total
+    private static final int ROUND_COUNT = 4; // 4 rounds in total
+    private static final int DRAFT_COUNT = 6; // 6 drafts in total
     private final Drafting draftMechanism = new Draft();
     boolean throwCard = true;
     private final AustraliaScoreCalculator scoreCalculator = new AustraliaScoreCalculator();
@@ -27,7 +27,6 @@ public class GameLoop {
     // Main game loop, manages game rounds and broadcasts game state to players.
     public void run() {
         List<Player> players = Server.getInstance().players;
-
         for (int i = 0; i < ROUND_COUNT; i++) {
             throwCard = true; // Resetting throwCard for each round
 
