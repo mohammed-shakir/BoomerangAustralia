@@ -53,7 +53,7 @@ public class Server {
     public void listenToClients(int amountOfPlayers) {
         while (clients.size() < amountOfPlayers) {
             if (acceptClient()) {
-                System.out.println("Player " + players.get(players.size() - 1).id + "connected");
+                System.out.println("Player " + players.get(players.size() - 1).getId() + "connected");
             }
         }
         broadcastMessage("\033[32mStart Game \033[0m \n");

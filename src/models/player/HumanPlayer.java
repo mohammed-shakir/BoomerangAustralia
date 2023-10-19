@@ -13,6 +13,10 @@ public class HumanPlayer extends Player {
 
     @Override
     public void setScore(int playerScore) {
-        this.score += playerScore;
+        this.score = playerScore;
+    }
+
+    public void incrementScore(int valueToAdd) {
+        this.score += valueToAdd;
     }
 }

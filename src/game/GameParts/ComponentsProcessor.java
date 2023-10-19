@@ -16,15 +16,15 @@ public class ComponentsProcessor implements IComponentsProcessor {
     @Override
     public void emptyPlayerHands(List<Player> players) {
         for (Player player : players) {
-            player.hand.clear();
-            player.chosenCards.clear();
+            player.getHand().clear();
+            player.getChosenCards().clear();
         }
     }
 
     @Override
     public void draftInitialHandsForPlayers(List<Player> players, Deck deck) {
         for (Player player : players) {
-            player.hand = deck.draftCards();
+            player.setHand(deck.draftCards());
         }
     }
 
@@ -42,7 +42,7 @@ public class ComponentsProcessor implements IComponentsProcessor {
             String chosenLetter;
 
             if (player instanceof Bot) {
-                chosenLetter = ((Bot) player).chooseCard();
+                chosenLetter = ((Bot) player).chooseCard().getLetter();
             } else {
                 chosenLetter = messages.get(i);
             }
@@ -50,14 +50,14 @@ public class ComponentsProcessor implements IComponentsProcessor {
             boolean isValidCard = false;
 
             while (!isValidCard) {
-                Iterator<Cards> it = player.hand.iterator();
+                Iterator<Cards> it = player.getHand().iterator();
                 while (it.hasNext()) {
                     Cards card = it.next();
                     if (card instanceof AustralianCard && ((AustralianCard) card).getLetter().equals(chosenLetter)) {
                         if (throwCard) {
                             card.setHidden(true);
                         }
-                        player.chosenCards.add(card);
+                        player.getChosenCards().add(card);
                         it.remove();
                         isValidCard = true;
                         break;
@@ -66,7 +66,7 @@ public class ComponentsProcessor implements IComponentsProcessor {
 
                 if (!isValidCard && !(player instanceof Bot)) {
                     Server.getInstance().broadcastMessage("Invalid card chosen. Try again.");
-                    chosenLetter = Server.getInstance().readMessageFromClient(player.id);
+                    chosenLetter = Server.getInstance().readMessageFromClient(player.getId());
                 }
             }
         }

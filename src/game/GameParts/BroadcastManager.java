@@ -12,16 +12,17 @@ public class BroadcastManager implements IBroadcastManager {
         Server.getInstance().broadcastMessage("\n");
         for (Player player : players) {
             StringBuilder chosenCardsMessage = new StringBuilder();
-            for (var chosenCard : player.chosenCards) {
+            for (var chosenCard : player.getChosenCards()) {
                 chosenCardsMessage.append(chosenCard.printCardDetails()).append(", ");
             }
             if (chosenCardsMessage.length() > 0) {
                 chosenCardsMessage.setLength(chosenCardsMessage.length() - 2);
                 for (ClientHandler client : Server.getInstance().clients) {
-                    if (client.id == player.id) {
+                    if (client.id == player.getId()) {
                         client.sendMessage("You Chose Cards: " + chosenCardsMessage.toString());
                     } else {
-                        client.sendMessage("Player " + player.id + " Chose Cards: " + chosenCardsMessage.toString());
+                        client.sendMessage(
+                                "Player " + player.getId() + " Chose Cards: " + chosenCardsMessage.toString());
                     }
                 }
             }
@@ -32,9 +33,9 @@ public class BroadcastManager implements IBroadcastManager {
     @Override
     public void broadcastPlayerHands(List<Player> players) {
         for (Player player : players) {
-            Server.getInstance().sendMessageToPlayer(player.id, "Your Hand: ");
-            for (var card : player.hand) {
-                Server.getInstance().sendMessageToPlayer(player.id, "Card: " + card.printCardDetails());
+            Server.getInstance().sendMessageToPlayer(player.getId(), "Your Hand: ");
+            for (var card : player.getHand()) {
+                Server.getInstance().sendMessageToPlayer(player.getId(), "Card: " + card.printCardDetails());
             }
         }
     }

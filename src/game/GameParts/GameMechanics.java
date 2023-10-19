@@ -16,27 +16,27 @@ public class GameMechanics implements IGameMechanics {
         Server.getInstance().broadcastMessage("\nEnd of Round Details");
 
         for (Player player : players) {
-            for (Cards card : player.chosenCards) {
+            for (Cards card : player.getChosenCards()) {
                 card.setHidden(false);
             }
 
             StringBuilder playerCardsMessage = new StringBuilder();
             playerCardsMessage.append("Yout Cards: ");
-            for (Cards card : player.chosenCards) {
+            for (Cards card : player.getChosenCards()) {
                 playerCardsMessage.append(card.printCardDetails()).append(", ");
             }
             if (playerCardsMessage.length() > 2) {
                 playerCardsMessage.setLength(playerCardsMessage.length() - 2);
             }
-            Server.getInstance().sendMessageToPlayer(player.id, playerCardsMessage.toString());
+            Server.getInstance().sendMessageToPlayer(player.getId(), playerCardsMessage.toString());
 
-            int playerScore = scoreCalculator.calculateTotalScore(new ArrayList<>(player.chosenCards));
+            int playerScore = scoreCalculator.calculateTotalScore(new ArrayList<>(player.getChosenCards()));
 
             for (ClientHandler client : Server.getInstance().clients) {
-                if (client.id == player.id) {
+                if (client.id == player.getId()) {
                     client.sendMessage("Your Score: " + playerScore);
                 } else {
-                    client.sendMessage("Player " + player.id + " Score: " + playerScore);
+                    client.sendMessage("Player " + player.getId() + " Score: " + playerScore);
                 }
             }
 
@@ -57,24 +57,24 @@ public class GameMechanics implements IGameMechanics {
             if (winners.size() == 1) {
                 playerMessage = (player.getScore() == highestScore)
                         ? "\nYou Won!\n"
-                        : "\nPlayer " + winners.get(0).id + " Wins!\n";
+                        : "\nPlayer " + winners.get(0).getId() + " Wins!\n";
             } else {
                 // Handle draws between multiple players
                 StringBuilder drawMessage = new StringBuilder("\nIt's a draw between players: ");
                 for (Player winner : winners) {
-                    drawMessage.append(winner.id).append(", ");
+                    drawMessage.append(winner.getId()).append(", ");
                 }
                 drawMessage.setLength(drawMessage.length() - 2); // remove trailing ", "
                 playerMessage = drawMessage.toString();
             }
 
             for (ClientHandler client : server.clients) {
-                String scoreMessage = (client.id == player.id)
+                String scoreMessage = (client.id == player.getId())
                         ? "Your Final Score: " + player.getScore()
-                        : "Player " + player.id + " Final Score: " + player.getScore();
+                        : "Player " + player.getId() + " Final Score: " + player.getScore();
 
                 client.sendMessage(scoreMessage);
-                if (client.id == player.id || winners.size() > 1) {
+                if (client.id == player.getId() || winners.size() > 1) {
                     client.sendMessage(playerMessage);
                 }
             }
