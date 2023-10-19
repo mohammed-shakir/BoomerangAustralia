@@ -2,6 +2,8 @@ package networking;
 
 import java.net.*;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
 
 import models.player.Bot;
 import models.player.HumanPlayer;
@@ -68,12 +70,13 @@ public class Server {
     }
 
     public ArrayList<String> waitForClientMessages() {
-        ThreadPool<String> pool = new ThreadPool<String>(clients.size());
+        ExecutorService executorService = Executors.newFixedThreadPool(clients.size());
+        ThreadPool<String> threadPool = new ThreadPool<>(clients.size(), executorService);
         for (int i = 0; i < clients.size(); i++) {
             int id = i;
-            pool.submit_task(() -> readMessageFromClient(id));
+            threadPool.submit_task(() -> readMessageFromClient(id));
         }
-        return pool.run_tasks();
+        return threadPool.run_tasks();
     }
 
     public void sendMessageToPlayer(int id, String message) {

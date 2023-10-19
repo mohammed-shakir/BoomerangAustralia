@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
@@ -14,9 +13,9 @@ public class ThreadPool<R> {
     ExecutorService executor;
     List<Callable<R>> callables = new ArrayList<>();
 
-    public ThreadPool(int threads) {
+    public ThreadPool(int threads, ExecutorService executorService) {
         this.threads = threads;
-        this.executor = Executors.newFixedThreadPool(this.threads);
+        this.executor = executorService;
     }
 
     public void submit_task(Supplier<R> function) {
@@ -26,20 +25,23 @@ public class ThreadPool<R> {
 
     public ArrayList<R> run_tasks() {
         try {
-            List<Future<R>> futures = this.executor.invokeAll(this.callables);
-            ArrayList<R> responses = new ArrayList<>();
-            for (Future<R> future : futures) {
-                try {
-                    responses.add(future.get());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            return responses;
+            return processFutures(this.executor.invokeAll(this.callables));
         } catch (Exception e) {
+            e.printStackTrace();
             return new ArrayList<R>();
         }
+    }
 
+    private ArrayList<R> processFutures(List<Future<R>> futures) {
+        ArrayList<R> responses = new ArrayList<>();
+        for (Future<R> future : futures) {
+            try {
+                responses.add(future.get());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return responses;
     }
 
     static class Task<R> implements Callable<R> {
