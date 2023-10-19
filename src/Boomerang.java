@@ -17,7 +17,7 @@ class BoomerangApp {
         if (args.length == 3) {
             startServer(Integer.parseInt(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]));
         } else if (args.length == 2) {
-            startClient(args[0], Integer.parseInt(args[1]));
+            startClient(args[0], Integer.parseInt(args[1]), new ClientUI());
         } else {
             System.out.println("Usage: java Boomerang <port> or java Boomerang <ip> <port>");
         }
@@ -34,8 +34,8 @@ class BoomerangApp {
         Server.getInstance().stopServer();
     }
 
-    private void startClient(String ip, int port) {
-        Client client = new Client(ip, port);
+    private void startClient(String ip, int port, IClientUI clientUI) {
+        Client client = new Client(ip, port, clientUI);
         client.awaitMessageFromServer();
     }
 }

@@ -2,7 +2,6 @@ package networking;
 
 import java.io.*;
 import java.net.*;
-import java.util.Scanner;
 
 public class Client {
     private String ipAddress;
@@ -10,28 +9,19 @@ public class Client {
     private Socket socket;
     private ObjectOutputStream outToServer;
     private ObjectInputStream inFromServer;
+    private IClientUI clientUI;
 
-    public Client(String ipAddress, int port) {
+    public Client(String ipAddress, int port, IClientUI clientUI) {
         try {
             this.ipAddress = ipAddress;
             this.port = port;
             this.socket = new Socket(ipAddress, port);
             this.outToServer = new ObjectOutputStream(socket.getOutputStream());
             this.inFromServer = new ObjectInputStream(socket.getInputStream());
+            this.clientUI = clientUI;
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public String promptUserForMessage() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the letter of the card you want to choose: ");
-        String cardLetter = scanner.nextLine().trim();
-        while (cardLetter.length() != 1) {
-            System.out.print("Invalid input. Please enter a single letter for the card you want to choose: ");
-            cardLetter = scanner.nextLine().trim();
-        }
-        return cardLetter;
     }
 
     public void awaitMessageFromServer() {
@@ -39,19 +29,19 @@ public class Client {
             while (true) {
                 String message = readMessageFromServer();
                 if (message.startsWith("PROMPT") || message.startsWith("Invalid")) {
-                    String inputMessage = promptUserForMessage();
+                    String inputMessage = clientUI.promptUserForMessage();
                     sendMessage(inputMessage);
                 } else if (message.equals("Game Over")) {
-                    System.out.println("\n" + message);
+                    clientUI.displayMessage("\n" + message);
                     socket.close();
                     System.exit(0);
                     break;
                 } else {
-                    System.out.println(message);
+                    clientUI.displayMessage(message);
                 }
             }
         } catch (Exception e) {
-            System.out.println("No message from server");
+            clientUI.displayMessage("No message from server");
         }
     }
 

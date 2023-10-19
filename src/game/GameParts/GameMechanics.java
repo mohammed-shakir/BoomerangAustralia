@@ -2,11 +2,12 @@ package game.GameParts;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import models.cards.Cards;
 import models.player.Player;
 import networking.Server;
-import networking.Server.ClientHandler;
+import networking.*;
 import scoring.AustraliaScoreCalculator;
 
 public class GameMechanics implements IGameMechanics {
@@ -49,11 +50,23 @@ public class GameMechanics implements IGameMechanics {
         server.broadcastMessage("\nEnd of Game Details");
 
         int highestScore = findHighestScore(players);
+        List<Player> winners = findWinners(players, highestScore); // Find all winners
 
         for (Player player : players) {
-            String playerMessage = (player.getScore() == highestScore)
-                    ? "\nYou Won!\n"
-                    : "\nPlayer " + findWinner(players, highestScore).id + " Wins!\n";
+            String playerMessage;
+            if (winners.size() == 1) {
+                playerMessage = (player.getScore() == highestScore)
+                        ? "\nYou Won!\n"
+                        : "\nPlayer " + winners.get(0).id + " Wins!\n";
+            } else {
+                // Handle draws between multiple players
+                StringBuilder drawMessage = new StringBuilder("\nIt's a draw between players: ");
+                for (Player winner : winners) {
+                    drawMessage.append(winner.id).append(", ");
+                }
+                drawMessage.setLength(drawMessage.length() - 2); // remove trailing ", "
+                playerMessage = drawMessage.toString();
+            }
 
             for (ClientHandler client : server.clients) {
                 String scoreMessage = (client.id == player.id)
@@ -61,7 +74,7 @@ public class GameMechanics implements IGameMechanics {
                         : "Player " + player.id + " Final Score: " + player.getScore();
 
                 client.sendMessage(scoreMessage);
-                if (client.id == player.id) {
+                if (client.id == player.id || winners.size() > 1) {
                     client.sendMessage(playerMessage);
                 }
             }
@@ -75,10 +88,9 @@ public class GameMechanics implements IGameMechanics {
                 .orElse(0);
     }
 
-    private Player findWinner(List<Player> players, int highestScore) {
+    private List<Player> findWinners(List<Player> players, int highestScore) {
         return players.stream()
                 .filter(p -> p.getScore() == highestScore)
-                .findFirst()
-                .orElse(null);
+                .collect(Collectors.toList()); // Collect all winners into a list
     }
 }

@@ -7,64 +7,12 @@ import models.player.Bot;
 import models.player.HumanPlayer;
 import models.player.Player;
 
-import java.io.*;
-
 public class Server {
     private int port;
     public ServerSocket aSocket;
     public ArrayList<ClientHandler> clients = new ArrayList<ClientHandler>();
     private static Server server_instance = null;
     public ArrayList<Player> players = new ArrayList<Player>();
-
-    public class ClientHandler {
-        public int id;
-        public Socket socket;
-        private ObjectOutputStream outToClient;
-        private ObjectInputStream inFromClient;
-        static int nextId = 1;
-
-        public ClientHandler(Socket socket) {
-            try {
-                this.socket = socket;
-                this.outToClient = new ObjectOutputStream(socket.getOutputStream());
-                this.inFromClient = new ObjectInputStream(socket.getInputStream());
-                this.id = nextId;
-                nextId++;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void sendMessage(Object message) {
-            try {
-                outToClient.writeObject(message);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        public String readMessage() {
-            try {
-                return (String) inFromClient.readObject();
-            } catch (Exception e) {
-                return null;
-            }
-        }
-
-        public ArrayList<ClientHandler> getClients() {
-            return clients;
-        }
-
-        public void close() {
-            try {
-                outToClient.close();
-                inFromClient.close();
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     public Server() {
     }
@@ -103,7 +51,7 @@ public class Server {
     public void listenToClients(int amountOfPlayers) {
         while (clients.size() < amountOfPlayers) {
             if (acceptClient()) {
-                System.out.println("Player " + players.get(players.size() - 1).id + " connected");
+                System.out.println("Player " + players.get(players.size() - 1).id + "connected");
             }
         }
         broadcastMessage("\033[32mStart Game \033[0m \n");
@@ -126,10 +74,6 @@ public class Server {
             pool.submit_task(() -> readMessageFromClient(id));
         }
         return pool.run_tasks();
-    }
-
-    public Player getPlayerById(int id) {
-        return players.get(id);
     }
 
     public void sendMessageToPlayer(int id, String message) {
