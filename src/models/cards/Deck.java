@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Collections;
 
 public class Deck {
-
     private List<Cards> cardsList = new ArrayList<>();
 
     public List<Cards> getCardsList() {
@@ -20,11 +19,20 @@ public class Deck {
     // removes the drafted cards from the original deck.
     public List<Cards> draftCards() {
         List<Cards> draftedCards = new ArrayList<>();
-        Collections.shuffle(cardsList);
+        shuffle(cardsList);
+
         int draftCount = Math.min(7, cardsList.size());
         for (int i = 0; i < draftCount; i++) {
             draftedCards.add(cardsList.remove(0));
         }
         return draftedCards;
+    }
+
+    public int getDeckSize() {
+        return cardsList.size();
+    }
+
+    public void shuffle(List<Cards> cardsList) {
+        Collections.shuffle(cardsList);
     }
 }

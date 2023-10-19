@@ -13,6 +13,8 @@ public class Boomerang {
 }
 
 class BoomerangApp {
+    public static boolean TEST_1 = false; // Requirment for test 1
+
     public void run(String[] args) throws Exception {
         if (args.length == 3) {
             startServer(Integer.parseInt(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]));
@@ -23,7 +25,18 @@ class BoomerangApp {
         }
     }
 
-    private void startServer(int port, int amountOfPlayers, int amountOfBots) {
+    public void startServer(int port, int amountOfPlayers, int amountOfBots) {
+        if ((amountOfPlayers + amountOfBots) > 4 || (amountOfPlayers + amountOfBots) < 2 || amountOfPlayers < 0
+                || amountOfBots < 0) {
+            System.out.println("Invalid amount of players");
+            throw new IllegalArgumentException();
+        }
+
+        // Check Test 1
+        if (TEST_1) {
+            return;
+        }
+
         Server.getInstance().serverStart(port);
         Server.getInstance().listenToClients(amountOfPlayers);
         Server.getInstance().initiateBots(amountOfBots);
@@ -35,7 +48,7 @@ class BoomerangApp {
         Server.getInstance().stopServer();
     }
 
-    private void startClient(String ip, int port, IClientUI clientUI) {
+    public void startClient(String ip, int port, IClientUI clientUI) {
         Client client = new Client(ip, port, clientUI);
         client.awaitMessageFromServer();
     }
