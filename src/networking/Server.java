@@ -13,6 +13,9 @@ public class Server {
     private int port;
     public ServerSocket aSocket;
     public ArrayList<ClientHandler> clients = new ArrayList<ClientHandler>();
+
+    // Singleton pattern: server_instance ensures a
+    // single instance of the Server class
     private static Server server_instance = null;
     public ArrayList<Player> players = new ArrayList<Player>();
 
@@ -28,6 +31,7 @@ public class Server {
         }
     }
 
+    // Singleton pattern: Returns the only instance of the Server class
     public static synchronized Server getInstance() {
         if (server_instance == null)
             server_instance = new Server();
@@ -35,6 +39,8 @@ public class Server {
         return server_instance;
     }
 
+    // Accept a client connection, add it to the client list,
+    // and associate a player object
     public boolean acceptClient() {
         try {
             Socket connection = aSocket.accept();
@@ -69,9 +75,10 @@ public class Server {
         return clients.get(id).readMessage();
     }
 
+    // Collect messages from all clients concurrently using Threads.
     public ArrayList<String> waitForClientMessages() {
         ExecutorService executorService = Executors.newFixedThreadPool(clients.size());
-        ThreadPool<String> threadPool = new ThreadPool<>(clients.size(), executorService);
+        Threads<String> threadPool = new Threads<>(clients.size(), executorService);
         for (int i = 0; i < clients.size(); i++) {
             int id = i;
             threadPool.submit_task(() -> readMessageFromClient(id));

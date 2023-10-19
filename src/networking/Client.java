@@ -11,6 +11,15 @@ public class Client {
     private ObjectInputStream inFromServer;
     private IClientUI clientUI;
 
+    /**
+     * Client constructor establishes a connection with the server
+     * and initializes input/output streams.
+     * 
+     * @param ipAddress IP address of the server.
+     * @param port      Server port.
+     * @param clientUI  Interface for the Client UI.
+     */
+
     public Client(String ipAddress, int port, IClientUI clientUI) {
         try {
             this.ipAddress = ipAddress;
@@ -24,10 +33,14 @@ public class Client {
         }
     }
 
+    // Main client loop, awaits messages from the server
     public void awaitMessageFromServer() {
         try {
             while (true) {
                 String message = readMessageFromServer();
+
+                // Depending on the message received from the server,
+                // different actions are taken.
                 if (message.startsWith("PROMPT") || message.startsWith("Invalid")) {
                     String inputMessage = clientUI.promptUserForMessage();
                     sendMessage(inputMessage);

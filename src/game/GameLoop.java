@@ -3,7 +3,7 @@ package game;
 import java.util.ArrayList;
 import java.util.List;
 
-import game.GameParts.*;
+import game.GameComponents.*;
 import models.cards.Deck;
 import models.draft.Draft;
 import models.draft.Drafting;
@@ -19,15 +19,19 @@ public class GameLoop {
     boolean throwCard = true;
     private final AustraliaScoreCalculator scoreCalculator = new AustraliaScoreCalculator();
 
+    // Various game components
     private GameMechanics gameMechanics = new GameMechanics();
     private BroadcastManager broadcastManager = new BroadcastManager();
     private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
 
+    // Main game loop, manages game rounds and broadcasts game state to players.
     public void run() {
         List<Player> players = Server.getInstance().players;
 
         for (int i = 0; i < ROUND_COUNT; i++) {
-            throwCard = true;
+            throwCard = true; // Resetting throwCard for each round
+
+            // Initialize game state and draft initial hands for players.
             componentsProcessor.emptyPlayerHands(players);
             Deck deck = componentsProcessor.initializeDeck();
             componentsProcessor.draftInitialHandsForPlayers(players, deck);
@@ -39,6 +43,7 @@ public class GameLoop {
         Server.getInstance().broadcastMessage("Game Over");
     }
 
+    // Handles individual game round logic.
     private void executeGameRound(int round, List<Player> players) {
         Server.getInstance().broadcastMessage("\nRound " + (round + 1));
         int draft = 0;
@@ -58,6 +63,8 @@ public class GameLoop {
             }
 
             Server.getInstance().broadcastMessage("PROMPT");
+
+            // Gather player selections and process them.
             ArrayList<String> clientMessages = Server.getInstance().waitForClientMessages();
             componentsProcessor.processPlayerCardSelections(clientMessages, players, throwCard);
 

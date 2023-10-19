@@ -1,4 +1,4 @@
-package game.GameParts;
+package game.GameComponents;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import models.cards.Cards;
 import models.player.Player;
-import networking.Server;
 import networking.*;
 import scoring.AustraliaScoreCalculator;
 
@@ -20,6 +19,7 @@ public class GameMechanics implements IGameMechanics {
                 card.setHidden(false);
             }
 
+            // Construct message detailing the cards chosen by the player
             StringBuilder playerCardsMessage = new StringBuilder();
             playerCardsMessage.append("Yout Cards: ");
             for (Cards card : player.getChosenCards()) {
@@ -50,10 +50,13 @@ public class GameMechanics implements IGameMechanics {
         server.broadcastMessage("\nEnd of Game Details");
 
         int highestScore = findHighestScore(players);
-        List<Player> winners = findWinners(players, highestScore); // Find all winners
+        List<Player> winners = findWinners(players, highestScore);
 
         for (Player player : players) {
             String playerMessage;
+
+            // Construct end game message based on whether there's a singular winner or a
+            // draw
             if (winners.size() == 1) {
                 playerMessage = (player.getScore() == highestScore)
                         ? "\nYou Won!\n"
@@ -64,7 +67,7 @@ public class GameMechanics implements IGameMechanics {
                 for (Player winner : winners) {
                     drawMessage.append(winner.getId()).append(", ");
                 }
-                drawMessage.setLength(drawMessage.length() - 2); // remove trailing ", "
+                drawMessage.setLength(drawMessage.length() - 2);
                 playerMessage = drawMessage.toString();
             }
 
@@ -88,9 +91,10 @@ public class GameMechanics implements IGameMechanics {
                 .orElse(0);
     }
 
+    // Identify the players (winners) who have the highest score.
     private List<Player> findWinners(List<Player> players, int highestScore) {
         return players.stream()
                 .filter(p -> p.getScore() == highestScore)
-                .collect(Collectors.toList()); // Collect all winners into a list
+                .collect(Collectors.toList());
     }
 }

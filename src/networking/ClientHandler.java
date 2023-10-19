@@ -3,6 +3,7 @@ package networking;
 import java.net.*;
 import java.io.*;
 
+// Represents a handler for individual clients connecting to a server. 
 public class ClientHandler {
     public int id;
     public Socket socket;

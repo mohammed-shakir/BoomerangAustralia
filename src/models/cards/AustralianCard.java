@@ -3,6 +3,18 @@ package models.cards;
 public class AustralianCard extends Cards {
     private String Collections, Animals, Activities;
 
+    /**
+     * Represents an Australian themed card that extends the base Card class.
+     *
+     * @param name        Card's name.
+     * @param letter      Associated letter with the card.
+     * @param region      Regional detail.
+     * @param number      Card's number.
+     * @param Collections Collection category.
+     * @param Animals     Animal category.
+     * @param Activities  Activity category.
+     * @param hidden      Indicates whether the card is hidden or not.
+     */
     public AustralianCard(String name, String letter, String region, int number, String Collections, String Animals,
             String Activities, boolean hidden) {
         super(name, letter, number, region, hidden);

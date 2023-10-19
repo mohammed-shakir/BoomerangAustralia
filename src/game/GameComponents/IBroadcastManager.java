@@ -1,4 +1,4 @@
-package game.GameParts;
+package game.GameComponents;
 
 import java.util.List;
 

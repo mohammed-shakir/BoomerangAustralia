@@ -21,6 +21,7 @@ public class AustraliaScoreCalculator implements ScoreCalculator {
 
     @Override
     public int calculateTouristSitesScore(List<Cards> chosenCards) {
+        // Map of region names to the sites in that region
         Map<String, List<String>> regionMap = new HashMap<>() {
             {
                 put("Western Australia", Arrays.asList("A", "B", "C", "D"));
@@ -38,6 +39,7 @@ public class AustraliaScoreCalculator implements ScoreCalculator {
         int score = 0;
         List<String> completedRegions = new ArrayList<>();
 
+        // Award points for fully visited regions.
         for (Map.Entry<String, List<String>> entry : regionMap.entrySet()) {
             if (visitedSites.containsAll(entry.getValue()) && !previouslyVisitedRegions.contains(entry.getKey())) {
                 completedRegions.add(entry.getKey());
@@ -71,6 +73,7 @@ public class AustraliaScoreCalculator implements ScoreCalculator {
             }
         }
 
+        // If the total score from collections is 7 or below, double it.
         if (totalScore <= 7) {
             totalScore *= 2;
         }
@@ -89,6 +92,7 @@ public class AustraliaScoreCalculator implements ScoreCalculator {
         animalScores.put("Koala", 7);
         animalScores.put("Platypus", 9);
 
+        // Count occurrences of each animal.
         for (Cards card : chosenCards) {
             String animal = ((AustralianCard) card).getAnimalType();
             animalCounts.put(animal, animalCounts.getOrDefault(animal, 0) + 1);
@@ -96,6 +100,7 @@ public class AustraliaScoreCalculator implements ScoreCalculator {
 
         int totalScore = 0;
 
+        // Calculate the score based on pairs of animals.
         for (String animal : animalCounts.keySet()) {
             int pairs = animalCounts.get(animal) / 2;
             totalScore += pairs * animalScores.getOrDefault(animal, 0);
@@ -108,6 +113,7 @@ public class AustraliaScoreCalculator implements ScoreCalculator {
     public int calculateActivitiesScore(List<Cards> chosenCards) {
         Map<String, Integer> activityCount = new HashMap<>();
 
+        // Count occurrences of each activity.
         for (Cards card : chosenCards) {
             String activity = ((AustralianCard) card).getActivity();
             if (activity != null) {

@@ -2,7 +2,8 @@ package models.cards;
 
 import org.json.simple.JSONObject;
 
-public class AustralianCardFactory implements CardFactory {
+// Factory class responsible for creating AustralianCard instances.
+public class AustralianCardFactory implements ICardFactory {
     @Override
     public Cards createCard(JSONObject cardData) {
         String name = (String) cardData.get("name");

@@ -10,6 +10,7 @@ public class Bot extends Player {
         super(id);
     }
 
+    // Bot chooses a random card from its hand.
     public Cards chooseCard() {
         if (!hand.isEmpty()) {
             return hand.get(random.nextInt(hand.size()));

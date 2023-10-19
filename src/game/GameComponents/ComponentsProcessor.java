@@ -1,4 +1,4 @@
-package game.GameParts;
+package game.GameComponents;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -6,6 +6,7 @@ import java.util.List;
 
 import models.cards.AustralianCard;
 import models.cards.AustralianCardFactory;
+import models.cards.CardLoader;
 import models.cards.Cards;
 import models.cards.Deck;
 import models.player.Bot;
@@ -31,10 +32,13 @@ public class ComponentsProcessor implements IComponentsProcessor {
     @Override
     public Deck initializeDeck() {
         Deck deck = new Deck();
-        deck.loadCardsFromJSON("/australia/cards.json", new AustralianCardFactory());
+        CardLoader loader = new CardLoader();
+        deck.loadCards(loader, "/australia/cards.json", new AustralianCardFactory());
         return deck;
     }
 
+    // Process card selections made by players. The selected card is added
+    // to the player's chosen cards and removed from their hand.
     @Override
     public void processPlayerCardSelections(ArrayList<String> messages, List<Player> players, boolean throwCard) {
         for (int i = 0; i < players.size(); i++) {

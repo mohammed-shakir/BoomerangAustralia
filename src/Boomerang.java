@@ -28,6 +28,7 @@ class BoomerangApp {
         Server.getInstance().listenToClients(amountOfPlayers);
         Server.getInstance().initiateBots(amountOfBots);
 
+        // Start game
         GameLoop serverGameLoop = new GameLoop();
         serverGameLoop.run();
 

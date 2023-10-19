@@ -1,4 +1,4 @@
-package game.GameParts;
+package game.GameComponents;
 
 import models.player.Player;
 import scoring.AustraliaScoreCalculator;

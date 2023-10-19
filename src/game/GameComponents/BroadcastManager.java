@@ -1,4 +1,4 @@
-package game.GameParts;
+package game.GameComponents;
 
 import java.util.List;
 
@@ -10,6 +10,8 @@ public class BroadcastManager implements IBroadcastManager {
     @Override
     public void broadcastChosenCards(List<Player> players) {
         Server.getInstance().broadcastMessage("\n");
+
+        // Broadcast chosen cards for each player
         for (Player player : players) {
             StringBuilder chosenCardsMessage = new StringBuilder();
             for (var chosenCard : player.getChosenCards()) {
