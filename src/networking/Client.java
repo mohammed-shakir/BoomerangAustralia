@@ -42,7 +42,7 @@ public class Client {
                     String inputMessage = promptUserForMessage();
                     sendMessage(inputMessage);
                 } else if (message.equals("Game Over")) {
-                    System.out.println(message);
+                    System.out.println("\n" + message);
                     socket.close();
                     System.exit(0);
                     break;
