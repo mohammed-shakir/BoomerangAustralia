@@ -18,8 +18,8 @@ import networking.Server.ClientHandler;
 import scoring.AustraliaScoreCalculator;
 
 public class GameLoop {
-    private static final int ROUND_COUNT = 2; // 4 rounds in total
-    private static final int DRAFT_COUNT = 3;
+    private static final int ROUND_COUNT = 4; // 4 rounds in total
+    private static final int DRAFT_COUNT = 6; // 6 drafts in total
     private final Drafting draftMechanism = new Draft();
     boolean throwCard = true;
     private final AustraliaScoreCalculator scoreCalculator = new AustraliaScoreCalculator();
@@ -115,18 +115,26 @@ public class GameLoop {
                 chosenLetter = messages.get(i);
             }
 
-            Iterator<Cards> it = player.hand.iterator();
-            while (it.hasNext()) {
-                Cards card = it.next();
-                if (card instanceof AustralianCard && ((AustralianCard) card).getLetter().equals(chosenLetter)) {
-                    if (throwCard) {
-                        card.setHidden(true);
+            boolean isValidCard = false;
+
+            while (!isValidCard) {
+                Iterator<Cards> it = player.hand.iterator();
+                while (it.hasNext()) {
+                    Cards card = it.next();
+                    if (card instanceof AustralianCard && ((AustralianCard) card).getLetter().equals(chosenLetter)) {
+                        if (throwCard) {
+                            card.setHidden(true);
+                        }
+                        player.chosenCards.add(card);
+                        it.remove();
+                        isValidCard = true;
+                        break;
                     }
-                    player.chosenCards.add(card);
-                    it.remove();
-                    break;
-                } else if (!(player instanceof Bot)) {
-                    Server.getInstance().sendMessageToPlayer(player.id, "Invalid card chosen");
+                }
+
+                if (!isValidCard && !(player instanceof Bot)) {
+                    Server.getInstance().broadcastMessage("Invalid card chosen. Try again.");
+                    chosenLetter = Server.getInstance().readMessageFromClient(player.id);
                 }
             }
         }

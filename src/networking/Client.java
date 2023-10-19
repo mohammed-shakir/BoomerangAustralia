@@ -26,7 +26,7 @@ public class Client {
     public String promptUserForMessage() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter the letter of the card you want to choose: ");
-        String cardLetter = scanner.nextLine();
+        String cardLetter = scanner.nextLine().trim();
         while (cardLetter.length() != 1) {
             System.out.print("Invalid input. Please enter a single letter for the card you want to choose: ");
             cardLetter = scanner.nextLine().trim();
@@ -38,7 +38,7 @@ public class Client {
         try {
             while (true) {
                 String message = readMessageFromServer();
-                if (message.startsWith("PROMPT")) {
+                if (message.startsWith("PROMPT") || message.startsWith("Invalid")) {
                     String inputMessage = promptUserForMessage();
                     sendMessage(inputMessage);
                 } else if (message.equals("Game Over")) {
